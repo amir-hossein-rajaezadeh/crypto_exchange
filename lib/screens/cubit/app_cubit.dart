@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_state.dart';
@@ -23,7 +24,8 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  Future<void> onCryptoItemClicked(int index) async {
+  Future<void> onCryptoItemClicked(
+      int index, AnimationController slideDownCartListController) async {
     emit(
       state.copyWith(selectedCryptoIndex: index),
     );
@@ -33,5 +35,6 @@ class AppCubit extends Cubit<AppState> {
     emit(
       state.copyWith(topContainerHeight: 820),
     );
+    slideDownCartListController.forward();
   }
 }

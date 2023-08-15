@@ -20,10 +20,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  late Animation<double> listViewItemScaleAnimation;
-  late Animation<double> listViewItemDefualtAnimation;
+  late Animation<double> selectedCryptoScaleAnimation;
+  late Animation<double> selectedCryptoDefualtAnimation;
+  late AnimationController selectedCryptoController;
 
-  late AnimationController listViewItemController;
+  late Animation<Offset> slideDownCartListAnimation;
+  late AnimationController slideDownCartListController;
 
   final bankListImage = ['assets/images/visa.png', 'assets/images/paypal.png'];
 
@@ -98,14 +100,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    listViewItemController = AnimationController(
+    slideDownCartListController = AnimationController(
+      duration: const Duration(milliseconds: 1900),
+      vsync: this,
+    );
+    selectedCryptoController = AnimationController(
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    listViewItemScaleAnimation =
-        Tween(begin: 1.0, end: 0.9).animate(listViewItemController);
-    listViewItemDefualtAnimation =
-        Tween(begin: 1.0, end: 1.0).animate(listViewItemController);
+    selectedCryptoScaleAnimation =
+        Tween(begin: 1.0, end: 0.9).animate(selectedCryptoController);
+    selectedCryptoDefualtAnimation =
+        Tween(begin: 1.0, end: 1.0).animate(selectedCryptoController);
+    slideDownCartListAnimation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0, 20),
+    ).animate(
+      CurvedAnimation(
+          parent: slideDownCartListController, curve: Curves.easeInQuint),
+    );
     context.read<AppCubit>().onStart();
 
     double width = MediaQuery.of(context).size.width;
@@ -219,17 +232,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             delay: Duration(milliseconds: 350 * index + 350),
             child: ScaleTransition(
               scale: index == state.selectedCryptoIndex
-                  ? listViewItemScaleAnimation
-                  : listViewItemDefualtAnimation,
+                  ? selectedCryptoScaleAnimation
+                  : selectedCryptoDefualtAnimation,
               child: Listener(
                 onPointerDown: (event) {
-                  context.read<AppCubit>().onCryptoItemClicked(
-                        index,
-                      );
-                  listViewItemController.forward();
+                  context
+                      .read<AppCubit>()
+                      .onCryptoItemClicked(index, slideDownCartListController);
+                  selectedCryptoController.forward();
                 },
                 onPointerUp: (event) {
-                  listViewItemController.reverse();
+                  selectedCryptoController.reverse();
                 },
                 child: Container(
                   color: Colors.transparent,
@@ -334,7 +347,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return AnimatedContainer(
       width: width,
       height: double.parse('${state.topContainerHeight}'),
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 1400),
       decoration: BoxDecoration(
         color: pink,
         borderRadius: BorderRadius.only(
@@ -346,62 +359,77 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: ListView(
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 0, left: 14, right: 14),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(9),
-                    child: Image.asset('assets/images/profile.jpeg'),
-                  ),
+          SlideTransition(
+            position: slideDownCartListAnimation,
+            child: FadeInDown(
+              delay: const Duration(milliseconds: 800),
+              child: Container(
+                margin: const EdgeInsets.only(top: 0, left: 14, right: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 35,
+                      height: 35,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(9),
+                        child: Image.asset('assets/images/profile.jpeg'),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 5),
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(9),
+                        border: Border.all(color: Colors.grey, width: 0.8),
+                      ),
+                      child: const Icon(Icons.settings, size: 19),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 5),
-                  width: 35,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(9),
-                    border: Border.all(color: Colors.grey, width: 0.8),
-                  ),
-                  child: const Icon(Icons.settings, size: 19),
-                ),
-              ],
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 15, left: 20),
-            child: Text(
-              Strings.myBalance,
-              style: AppTheme.getTextTheme(null).titleLarge!.copyWith(),
+          SlideTransition(
+            position: slideDownCartListAnimation,
+            child: Container(
+              margin: const EdgeInsets.only(top: 15, left: 20),
+              child: Text(
+                Strings.myBalance,
+                style: AppTheme.getTextTheme(null).titleLarge!.copyWith(),
+              ),
             ),
           ),
-          Container(
-            alignment: Alignment.topLeft,
-            margin: const EdgeInsets.only(top: 5, left: 20),
-            child: AnimatedDigitWidget(
-              value: 2374.45,
-              fractionDigits: 2,
-              duration: const Duration(milliseconds: 1700),
-              enableSeparator: true,
-              prefix: "\$",
-              textStyle: AppTheme.getTextTheme(null)
-                  .titleLarge!
-                  .copyWith(fontSize: 40),
+          SlideTransition(
+            position: slideDownCartListAnimation,
+            child: Container(
+              alignment: Alignment.topLeft,
+              margin: const EdgeInsets.only(top: 5, left: 20),
+              child: AnimatedDigitWidget(
+                value: 2374.45,
+                fractionDigits: 2,
+                duration: const Duration(milliseconds: 1700),
+                enableSeparator: true,
+                prefix: "\$",
+                textStyle: AppTheme.getTextTheme(null)
+                    .titleLarge!
+                    .copyWith(fontSize: 40),
+              ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 18),
-            height: 60,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return cartInfoWidget(index);
-              },
+          SlideTransition(
+            position: slideDownCartListAnimation,
+            child: Container(
+              margin: const EdgeInsets.only(top: 18),
+              height: 60,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  return cartInfoWidget(index);
+                },
+              ),
             ),
           )
         ],
