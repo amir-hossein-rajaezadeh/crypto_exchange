@@ -12,10 +12,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../utlis/colors.dart';
 import 'cubit/app_cubit.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late Animation<double> listViewItemScaleAnimation;
+  late Animation<double> listViewItemDefualtAnimation;
+
+  late AnimationController listViewItemController;
 
   final bankListImage = ['assets/images/visa.png', 'assets/images/paypal.png'];
+
   final cryptoList = [
     Crypto(
       'Matic',
@@ -84,8 +95,17 @@ class HomePage extends StatelessWidget {
       ],
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
+    listViewItemController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    listViewItemScaleAnimation =
+        Tween(begin: 1.0, end: 0.9).animate(listViewItemController);
+    listViewItemDefualtAnimation =
+        Tween(begin: 1.0, end: 1.0).animate(listViewItemController);
     context.read<AppCubit>().onStart();
 
     double width = MediaQuery.of(context).size.width;
@@ -98,11 +118,11 @@ class HomePage extends StatelessWidget {
               Column(
                 children: [
                   firstWidget(width, state),
-                  balncesWidget(),
-                  cryptoListViewWidget(),
+                  if (state.topContainerHeight == 310) balncesWidget(),
+                  cryptoListViewWidget(this, state),
                 ],
               ),
-              bottomBarWidget(width)
+              if (state.topContainerHeight == 310) bottomBarWidget(width)
             ],
           ),
         );
@@ -186,7 +206,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Expanded cryptoListViewWidget() {
+  Widget cryptoListViewWidget(TickerProvider provider, AppState state) {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(0),
@@ -194,94 +214,114 @@ class HomePage extends StatelessWidget {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           final crypto = cryptoList[index];
+          print('listview ${state.selectedCryptoIndex}');
           return FadeInUp(
             delay: Duration(milliseconds: 350 * index + 350),
-            child: Container(
-              margin: EdgeInsets.only(left: 16, top: index == 0 ? 0 : 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+            child: ScaleTransition(
+              scale: index == state.selectedCryptoIndex
+                  ? listViewItemScaleAnimation
+                  : listViewItemDefualtAnimation,
+              child: Listener(
+                onPointerDown: (event) {
+                  context.read<AppCubit>().onCryptoItemClicked(
+                        index,
+                      );
+                  listViewItemController.forward();
+                },
+                onPointerUp: (event) {
+                  listViewItemController.reverse();
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  margin: EdgeInsets.only(left: 16, top: index == 0 ? 0 : 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: lightGrey,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Container(
+                      Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
                             decoration: BoxDecoration(
+                              color: lightGrey,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            width: 25,
-                            height: 25,
-                            child: Image.asset(
-                              crypto.cryptoImage,
-                              color: Colors.black,
-                              fit: BoxFit.cover,
+                            child: Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                width: 25,
+                                height: 25,
+                                child: Image.asset(
+                                  crypto.cryptoImage,
+                                  color: Colors.black,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  crypto.cryptoName,
+                                  style: AppTheme.getTextTheme(null).bodyLarge,
+                                ),
+                                Text('\$'
+                                    '${crypto.cryptoPrice} ${crypto.cryptoName}'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       Container(
-                        margin: const EdgeInsets.only(left: 8),
+                        margin: const EdgeInsets.only(top: 15, right: 15),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              crypto.cryptoName,
-                              style: AppTheme.getTextTheme(null).bodyLarge,
-                            ),
-                            Text('\$'
-                                '${crypto.cryptoPrice} ${crypto.cryptoName}'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 15, right: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '\$${crypto.cryptoChangedPrice}',
-                          style: AppTheme.getTextTheme(null)
-                              .bodyMedium!
-                              .copyWith(
-                                  fontWeight: FontWeight.w500, fontSize: 17),
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              crypto.isIncrease
-                                  ? CupertinoIcons.arrow_up_right
-                                  : CupertinoIcons.arrow_down_right,
-                              color:
-                                  crypto.isIncrease ? lightGreen : Colors.red,
-                              size: 22,
-                            ),
-                            const SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              '${crypto.cryptoChangedPercentage}%',
+                              '\$${crypto.cryptoChangedPrice}',
                               style: AppTheme.getTextTheme(null)
                                   .bodyMedium!
                                   .copyWith(
-                                      fontSize: 15,
-                                      color: crypto.isIncrease
-                                          ? lightGreen
-                                          : Colors.red),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 17),
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  crypto.isIncrease
+                                      ? CupertinoIcons.arrow_up_right
+                                      : CupertinoIcons.arrow_down_right,
+                                  color: crypto.isIncrease
+                                      ? lightGreen
+                                      : Colors.red,
+                                  size: 22,
+                                ),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  '${crypto.cryptoChangedPercentage}%',
+                                  style: AppTheme.getTextTheme(null)
+                                      .bodyMedium!
+                                      .copyWith(
+                                          fontSize: 15,
+                                          color: crypto.isIncrease
+                                              ? lightGreen
+                                              : Colors.red),
+                                )
+                              ],
                             )
                           ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
           );
@@ -295,11 +335,12 @@ class HomePage extends StatelessWidget {
       width: width,
       height: double.parse('${state.topContainerHeight}'),
       duration: const Duration(milliseconds: 1100),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: pink,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+          bottomLeft: Radius.circular(state.topContainerHeight == 310 ? 40 : 0),
+          bottomRight:
+              Radius.circular(state.topContainerHeight == 310 ? 40 : 0),
         ),
       ),
       child: ListView(

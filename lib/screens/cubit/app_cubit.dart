@@ -5,7 +5,8 @@ import 'app_state.dart';
 class AppCubit extends Cubit<AppState> {
   AppCubit()
       : super(
-          const AppState(isFirstTry: true, topContainerHeight: 0),
+          const AppState(
+              isFirstTry: true, topContainerHeight: 0, selectedCryptoIndex: -1),
         );
   Future<void> onStart() async {
     emit(
@@ -20,5 +21,17 @@ class AppCubit extends Cubit<AppState> {
       );
       print('called ${state.isFirstTry}');
     }
+  }
+
+  Future<void> onCryptoItemClicked(int index) async {
+    emit(
+      state.copyWith(selectedCryptoIndex: index),
+    );
+    await Future.delayed(
+      const Duration(milliseconds: 700),
+    );
+    emit(
+      state.copyWith(topContainerHeight: 820),
+    );
   }
 }
