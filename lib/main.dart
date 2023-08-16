@@ -1,5 +1,5 @@
-import 'package:crypto_exchange/screens/cubit/app_cubit.dart';
-import 'package:crypto_exchange/screens/home.dart';
+import 'package:crypto_exchange/cubit/app_cubit.dart';
+import 'package:crypto_exchange/screens/crypto_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (context) => AppCubit(),
-        child: HomePage(),
+        child: const CryptoDetailPage(),
       ),
     );
   }

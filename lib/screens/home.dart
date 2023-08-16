@@ -1,16 +1,14 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_digit/animated_digit.dart';
-import 'package:crypto_exchange/data/crypto.dart';
-import 'package:crypto_exchange/data/crypto_log.dart';
-import 'package:crypto_exchange/screens/cubit/app_state.dart';
+import 'package:crypto_exchange/cubit/app_state.dart';
 import 'package:crypto_exchange/utlis/app_theme.dart';
 import 'package:crypto_exchange/utlis/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../data/crypto_list.dart';
 import '../utlis/colors.dart';
-import 'cubit/app_cubit.dart';
+import '../cubit/app_cubit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,75 +26,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController slideDownCartListController;
 
   final bankListImage = ['assets/images/visa.png', 'assets/images/paypal.png'];
-
-  final cryptoList = [
-    Crypto(
-      'Matic',
-      'assets/images/matic.png',
-      1.2737,
-      7800.67,
-      2.34,
-      false,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-    Crypto(
-      'USDT',
-      'assets/images/usdt.png',
-      700,
-      5465.49,
-      3.12,
-      true,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-    Crypto(
-      'ETH',
-      'assets/images/ethereum.png',
-      2.45845,
-      560.49,
-      5.70,
-      true,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-    Crypto(
-      'SAND',
-      'assets/images/sand.png',
-      1.5626,
-      34.09,
-      2.30,
-      true,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-    Crypto(
-      'USDC',
-      'assets/images/usdc.png',
-      1.2737,
-      2587.13,
-      3.60,
-      false,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-    Crypto(
-      'Bit',
-      'assets/images/bitcoin.png',
-      1.2737,
-      9952.67,
-      2.34,
-      false,
-      [
-        CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50),
-      ],
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +153,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.all(0),
-        itemCount: cryptoList.length,
+        itemCount: addCryptoToList().length,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           final crypto = cryptoList[index];

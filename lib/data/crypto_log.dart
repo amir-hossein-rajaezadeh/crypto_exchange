@@ -1,6 +1,7 @@
 class CryptoLog {
-   final String logSource;
+  final String logSource;
   final bool isIncrease;
-  final double logPrice;
-  CryptoLog(this.isIncrease, this.logSource, this.logPrice);
+  final int logPrice;
+  final double logPriceInDollar;
+  CryptoLog(this.isIncrease, this.logSource, this.logPrice, this.logPriceInDollar);
 }

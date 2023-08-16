@@ -1,4 +1,4 @@
-import 'crypto_log.dart';
+import 'crypto_transactions.dart';
 
 class Crypto {
   final String cryptoName;
@@ -7,7 +7,7 @@ class Crypto {
   final double cryptoChangedPrice;
   final double cryptoPrice;
   final bool isIncrease;
-  final List<CryptoLog> cryptoLog;
+  final List<CryptoTransactions> cryptoTransactions;
   Crypto(
     this.cryptoName,
     this.cryptoImage,
@@ -15,6 +15,6 @@ class Crypto {
     this.cryptoChangedPrice,
     this.cryptoChangedPercentage,
     this.isIncrease,
-    this.cryptoLog,
+    this.cryptoTransactions,
   );
 }
