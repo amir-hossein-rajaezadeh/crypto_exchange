@@ -119,6 +119,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       CurvedAnimation(
           parent: slideDownCartListController, curve: Curves.easeInQuint),
     );
+
     context.read<AppCubit>().onStart();
 
     double width = MediaQuery.of(context).size.width;
@@ -227,7 +228,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           final crypto = cryptoList[index];
-          print('listview ${state.selectedCryptoIndex}');
           return FadeInUp(
             delay: Duration(milliseconds: 350 * index + 350),
             child: ScaleTransition(
@@ -359,76 +359,96 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: ListView(
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          SlideTransition(
-            position: slideDownCartListAnimation,
-            child: FadeInDown(
-              delay: const Duration(milliseconds: 800),
-              child: Container(
-                margin: const EdgeInsets.only(top: 0, left: 14, right: 14),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 35,
-                      height: 35,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(9),
-                        child: Image.asset('assets/images/profile.jpeg'),
+          AnimatedOpacity(
+            curve: Curves.easeInQuint,
+            duration: const Duration(milliseconds: 1600),
+            opacity: state.topContainerHeight == 820 ? 0.0 : 1.0,
+            child: SlideTransition(
+              position: slideDownCartListAnimation,
+              child: FadeInDown(
+                delay: const Duration(milliseconds: 1000),
+                child: Container(
+                  margin: const EdgeInsets.only(top: 0, left: 14, right: 14),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(9),
+                          child: Image.asset('assets/images/profile.jpeg'),
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 5),
-                      width: 35,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(9),
-                        border: Border.all(color: Colors.grey, width: 0.8),
+                      Container(
+                        margin: const EdgeInsets.only(top: 5),
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(9),
+                          border: Border.all(color: Colors.grey, width: 0.8),
+                        ),
+                        child: const Icon(Icons.settings, size: 19),
                       ),
-                      child: const Icon(Icons.settings, size: 19),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          SlideTransition(
-            position: slideDownCartListAnimation,
-            child: Container(
-              margin: const EdgeInsets.only(top: 15, left: 20),
-              child: Text(
-                Strings.myBalance,
-                style: AppTheme.getTextTheme(null).titleLarge!.copyWith(),
+          AnimatedOpacity(
+            curve: Curves.easeInQuint,
+            duration: const Duration(milliseconds: 1600),
+            opacity: state.topContainerHeight == 820 ? 0.0 : 1.0,
+            child: SlideTransition(
+              position: slideDownCartListAnimation,
+              child: Container(
+                margin: const EdgeInsets.only(top: 15, left: 20),
+                child: Text(
+                  Strings.myBalance,
+                  style: AppTheme.getTextTheme(null).titleLarge!.copyWith(),
+                ),
               ),
             ),
           ),
-          SlideTransition(
-            position: slideDownCartListAnimation,
-            child: Container(
-              alignment: Alignment.topLeft,
-              margin: const EdgeInsets.only(top: 5, left: 20),
-              child: AnimatedDigitWidget(
-                value: 2374.45,
-                fractionDigits: 2,
-                duration: const Duration(milliseconds: 1700),
-                enableSeparator: true,
-                prefix: "\$",
-                textStyle: AppTheme.getTextTheme(null)
-                    .titleLarge!
-                    .copyWith(fontSize: 40),
+          AnimatedOpacity(
+            curve: Curves.easeInQuint,
+            duration: const Duration(milliseconds: 1700),
+            opacity: state.topContainerHeight == 820 ? 0.0 : 1.0,
+            child: SlideTransition(
+              position: slideDownCartListAnimation,
+              child: Container(
+                alignment: Alignment.topLeft,
+                margin: const EdgeInsets.only(top: 5, left: 20),
+                child: AnimatedDigitWidget(
+                  value: 2374.45,
+                  fractionDigits: 2,
+                  duration: const Duration(milliseconds: 1700),
+                  enableSeparator: true,
+                  prefix: "\$",
+                  textStyle: AppTheme.getTextTheme(null)
+                      .titleLarge!
+                      .copyWith(fontSize: 40),
+                ),
               ),
             ),
           ),
-          SlideTransition(
-            position: slideDownCartListAnimation,
-            child: Container(
-              margin: const EdgeInsets.only(top: 18),
-              height: 60,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return cartInfoWidget(index);
-                },
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 1700),
+            curve: Curves.easeInQuint,
+            opacity: state.topContainerHeight == 820 ? 0.0 : 1.0,
+            child: SlideTransition(
+              position: slideDownCartListAnimation,
+              child: Container(
+                margin: const EdgeInsets.only(top: 18),
+                height: 60,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return cartInfoWidget(index);
+                  },
+                ),
               ),
             ),
           )
