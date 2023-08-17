@@ -7,7 +7,10 @@ class AppCubit extends Cubit<AppState> {
   AppCubit()
       : super(
           const AppState(
-              isFirstTry: true, topContainerHeight: 0, selectedCryptoIndex: -1),
+              isFirstTry: true,
+              topContainerHeight: 0,
+              selectedCryptoIndex: 0,
+              showCryptoDetailPage: false),
         );
   Future<void> onStart() async {
     emit(
@@ -25,7 +28,9 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> onCryptoItemClicked(
-      int index, AnimationController slideDownCartListController) async {
+      int index,
+      AnimationController slideDownCartListController,
+      AnimationController slideDownCryptoDetailController) async {
     emit(
       state.copyWith(selectedCryptoIndex: index),
     );
@@ -36,5 +41,13 @@ class AppCubit extends Cubit<AppState> {
       state.copyWith(topContainerHeight: 820),
     );
     slideDownCartListController.forward();
+
+    await Future.delayed(
+      const Duration(seconds: 1),
+    );
+    emit(
+      state.copyWith(showCryptoDetailPage: true),
+    );
+    slideDownCryptoDetailController.forward();
   }
 }

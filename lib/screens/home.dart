@@ -6,6 +6,7 @@ import 'package:crypto_exchange/utlis/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../data/crypto.dart';
 import '../data/crypto_list.dart';
 import '../utlis/colors.dart';
 import '../cubit/app_cubit.dart';
@@ -25,10 +26,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<Offset> slideDownCartListAnimation;
   late AnimationController slideDownCartListController;
 
+  late Animation<Offset> slideDownCryptoDetailAnimation;
+  late AnimationController slideDownCryptoDetailController;
+
   final bankListImage = ['assets/images/visa.png', 'assets/images/paypal.png'];
 
   @override
   Widget build(BuildContext context) {
+    slideDownCryptoDetailController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
     slideDownCartListController = AnimationController(
       duration: const Duration(milliseconds: 1900),
       vsync: this,
@@ -48,6 +56,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       CurvedAnimation(
           parent: slideDownCartListController, curve: Curves.easeInQuint),
     );
+    slideDownCryptoDetailAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: const Offset(0, 0),
+    ).animate(
+      slideDownCryptoDetailController,
+    );
 
     context.read<AppCubit>().onStart();
 
@@ -65,7 +79,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   cryptoListViewWidget(this, state),
                 ],
               ),
-              if (state.topContainerHeight == 310) bottomBarWidget(width)
+              if (state.topContainerHeight == 310) bottomBarWidget(width),
+              if (state.showCryptoDetailPage)
+                SlideTransition(
+                  position: slideDownCryptoDetailAnimation,
+                  child: cryptoTransactions(state),
+                ),
             ],
           ),
         );
@@ -165,9 +184,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : selectedCryptoDefualtAnimation,
               child: Listener(
                 onPointerDown: (event) {
-                  context
-                      .read<AppCubit>()
-                      .onCryptoItemClicked(index, slideDownCartListController);
+                  context.read<AppCubit>().onCryptoItemClicked(
+                      index,
+                      slideDownCartListController,
+                      slideDownCryptoDetailController);
                   selectedCryptoController.forward();
                 },
                 onPointerUp: (event) {
@@ -464,6 +484,206 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             : Center(
                 child: Text(Strings.addCard),
               ),
+      ),
+    );
+  }
+
+  Widget sendAndBuy() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 50,
+            width: 190,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15), color: darkPink),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    const Icon(CupertinoIcons.arrow_up_right),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      Strings.send,
+                      style: AppTheme.getTextTheme(null).bodyMedium,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Container(
+            height: 50,
+            width: 190,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15), color: darkPink),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    const Icon(CupertinoIcons.creditcard),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      Strings.buy,
+                      style: AppTheme.getTextTheme(null).bodyMedium,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget cryptoTransactions(AppState state) {
+    final crypto = addCryptoToList()[state.selectedCryptoIndex];
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (state.showCryptoDetailPage)
+          SlideTransition(
+            position: slideDownCryptoDetailAnimation,
+            child: sendAndBuy(),
+          ),
+        SizedBox(
+            height: 500,
+            child: ListView.builder(
+              itemCount: crypto.cryptoTransactions.length,
+              padding: const EdgeInsets.all(0),
+              shrinkWrap: true,
+              itemBuilder: (context, wholeItemIndex) {
+                final cryptoTransactions =
+                    crypto.cryptoTransactions[wholeItemIndex];
+                return FadeInDown(
+                  delay: Duration(milliseconds: (wholeItemIndex * 150) + 200),
+                  child: SizedBox(
+                    child: ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      itemCount: cryptoTransactions.cryptoLogs.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            cryptoTransactions.cryptoLogs[index] ==
+                                    cryptoTransactions.cryptoLogs[0]
+                                ? Container(
+                                    margin: const EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      cryptoTransactions.logDate,
+                                      style: AppTheme.getTextTheme(null)
+                                          .bodyMedium!
+                                          .copyWith(
+                                              color: grey,
+                                              fontWeight: FontWeight.w400),
+                                    ),
+                                  )
+                                : Container(),
+                            transactionItemWidget(
+                                crypto, context, wholeItemIndex, index)
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            )),
+      ],
+    );
+  }
+
+  Container transactionItemWidget(
+      Crypto crypto, BuildContext context, int wholeItemIndex, int index) {
+    final cryptoTransactions = crypto.cryptoTransactions[wholeItemIndex];
+    return Container(
+      margin: const EdgeInsets.only(top: 5, right: 15, left: 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: Colors.white,
+      ),
+      height: 60,
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 9),
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: lightGrey),
+            child: Icon(
+              cryptoTransactions.cryptoLogs[index].isIncrease
+                  ? CupertinoIcons.arrow_down_left
+                  : CupertinoIcons.arrow_up_right,
+              size: 30,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              left: 8,
+              top: 8,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  cryptoTransactions.cryptoLogs[index].isIncrease
+                      ? Strings.received
+                      : Strings.sent,
+                  style: AppTheme.getTextTheme(null).bodyMedium,
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  cryptoTransactions.cryptoLogs[index].logSource,
+                  style: AppTheme.getTextTheme(null).bodySmall,
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(right: 15, top: 9),
+              alignment: Alignment.topRight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${cryptoTransactions.cryptoLogs[index].isIncrease ? '+' : '-'}${cryptoTransactions.cryptoLogs[index].logPrice} USDT',
+                    style: AppTheme.getTextTheme(null).bodyMedium!.copyWith(
+                        fontSize: 15,
+                        color: cryptoTransactions.cryptoLogs[index].isIncrease
+                            ? Colors.green
+                            : Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                      '\$${cryptoTransactions.cryptoLogs[index].logPriceInDollar}',
+                      style: AppTheme.getTextTheme(null).bodySmall!)
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
