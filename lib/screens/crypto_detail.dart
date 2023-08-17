@@ -15,7 +15,6 @@ class CryptoDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final crypto = addCryptoToList()[0];
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: pink,
@@ -23,36 +22,34 @@ class CryptoDetailPage extends StatelessWidget {
           builder: (context, state) {
             return Column(
               children: [
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 12, top: 10),
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: grey),
-                        ),
-                        child:
-                            const Center(child: Icon(Icons.arrow_back_ios_new)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(left: 12, top: 10),
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: grey),
                       ),
-                      Expanded(
-                        child: Container(
-                          width: 50,
-                          margin: const EdgeInsets.only(right: 50, top: 0),
-                          alignment: Alignment.center,
-                          child: Text(
-                            crypto.cryptoName,
-                            style: AppTheme.getTextTheme(null)
-                                .bodyMedium!
-                                .copyWith(color: Colors.white, fontSize: 18),
-                          ),
+                      child:
+                          const Center(child: Icon(Icons.arrow_back_ios_new)),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 50,
+                        margin: const EdgeInsets.only(right: 50, top: 0),
+                        alignment: Alignment.center,
+                        child: Text(
+                          crypto.cryptoName,
+                          style: AppTheme.getTextTheme(null)
+                              .bodyMedium!
+                              .copyWith(color: Colors.white, fontSize: 18),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 40),
@@ -78,11 +75,9 @@ class CryptoDetailPage extends StatelessWidget {
                         .copyWith(fontSize: 40),
                   ),
                 ),
-                Container(
-                  child: Text(
-                    '0.19 USDT',
-                    style: AppTheme.getTextTheme(null).bodySmall,
-                  ),
+                Text(
+                  '0.19 USDT',
+                  style: AppTheme.getTextTheme(null).bodySmall,
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 20),
@@ -98,20 +93,17 @@ class CryptoDetailPage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              child: Row(
-                                children: [
-                                  const Icon(CupertinoIcons.arrow_up_right),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                  Text(
-                                    Strings.send,
-                                    style:
-                                        AppTheme.getTextTheme(null).bodyMedium,
-                                  ),
-                                ],
-                              ),
+                            Row(
+                              children: [
+                                const Icon(CupertinoIcons.arrow_up_right),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  Strings.send,
+                                  style: AppTheme.getTextTheme(null).bodyMedium,
+                                ),
+                              ],
                             )
                           ],
                         ),
@@ -152,40 +144,39 @@ class CryptoDetailPage extends StatelessWidget {
                     padding: const EdgeInsets.all(0),
                     shrinkWrap: true,
                     itemBuilder: (context, wholeItemIndex) {
+                      final cryptoTransactions =
+                          crypto.cryptoTransactions[wholeItemIndex];
                       return SizedBox(
-                          child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(0),
-                        shrinkWrap: true,
-                        itemCount: crypto.cryptoTransactions[wholeItemIndex]
-                            .cryptoLogs.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              crypto.cryptoTransactions[index].cryptoLogs
-                                          .length >
-                                      1
-                                  ? Container()
-                                  : Container(
-                                      margin: const EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        crypto
-                                            .cryptoTransactions[wholeItemIndex]
-                                            .logDate,
-                                        style: AppTheme.getTextTheme(null)
-                                            .bodyMedium!
-                                            .copyWith(
-                                                color: grey,
-                                                fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                              transactionItemWidget(
-                                  crypto, context, wholeItemIndex, index)
-                            ],
-                          );
-                        },
-                      ));
+                        child: ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          itemCount: cryptoTransactions.cryptoLogs.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                cryptoTransactions.cryptoLogs[index] ==
+                                        cryptoTransactions.cryptoLogs[0]
+                                    ? Container(
+                                        margin: const EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          cryptoTransactions.logDate,
+                                          style: AppTheme.getTextTheme(null)
+                                              .bodyMedium!
+                                              .copyWith(
+                                                  color: grey,
+                                                  fontWeight: FontWeight.w400),
+                                        ),
+                                      )
+                                    : Container(),
+                                transactionItemWidget(
+                                    crypto, context, wholeItemIndex, index)
+                              ],
+                            );
+                          },
+                        ),
+                      );
                     },
                   ),
                 )
@@ -199,6 +190,7 @@ class CryptoDetailPage extends StatelessWidget {
 
   Container transactionItemWidget(
       Crypto crypto, BuildContext context, int wholeItemIndex, int index) {
+    final cryptoTransactions = crypto.cryptoTransactions[wholeItemIndex];
     return Container(
       margin: const EdgeInsets.only(top: 5, right: 15, left: 15),
       decoration: BoxDecoration(
@@ -216,8 +208,7 @@ class CryptoDetailPage extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10), color: lightGrey),
             child: Icon(
-              crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index]
-                      .isIncrease
+              cryptoTransactions.cryptoLogs[index].isIncrease
                   ? CupertinoIcons.arrow_down_left
                   : CupertinoIcons.arrow_up_right,
               size: 30,
@@ -232,8 +223,7 @@ class CryptoDetailPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index]
-                          .isIncrease
+                  cryptoTransactions.cryptoLogs[index].isIncrease
                       ? Strings.received
                       : Strings.sent,
                   style: AppTheme.getTextTheme(null).bodyMedium,
@@ -242,8 +232,7 @@ class CryptoDetailPage extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index]
-                      .logSource,
+                  cryptoTransactions.cryptoLogs[index].logSource,
                   style: AppTheme.getTextTheme(null).bodySmall,
                 )
               ],
@@ -257,11 +246,10 @@ class CryptoDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index].isIncrease ? '+' : '-'}${crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index].logPrice} USDT',
+                    '${cryptoTransactions.cryptoLogs[index].isIncrease ? '+' : '-'}${cryptoTransactions.cryptoLogs[index].logPrice} USDT',
                     style: AppTheme.getTextTheme(null).bodyMedium!.copyWith(
                         fontSize: 15,
-                        color: crypto.cryptoTransactions[wholeItemIndex]
-                                .cryptoLogs[index].isIncrease
+                        color: cryptoTransactions.cryptoLogs[index].isIncrease
                             ? Colors.green
                             : Colors.red),
                   ),
@@ -269,7 +257,7 @@ class CryptoDetailPage extends StatelessWidget {
                     height: 4,
                   ),
                   Text(
-                      '\$${crypto.cryptoTransactions[wholeItemIndex].cryptoLogs[index].logPriceInDollar}',
+                      '\$${cryptoTransactions.cryptoLogs[index].logPriceInDollar}',
                       style: AppTheme.getTextTheme(null).bodySmall!)
                 ],
               ),
