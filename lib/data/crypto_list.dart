@@ -40,15 +40,6 @@ final cryptoList = [
           CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 20, 0.12),
           CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 70, 0.60),
           CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
-
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
-
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
-
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
-
-          // CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 10, 0.05),
         ],
       )
     ],

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'app_state.dart';
 
@@ -7,10 +8,10 @@ class AppCubit extends Cubit<AppState> {
   AppCubit()
       : super(
           const AppState(
-              isFirstTry: true,
-              topContainerHeight: 0,
-              selectedCryptoIndex: 0,
-              showCryptoDetailPage: false),
+            isFirstTry: true,
+            topContainerHeight: 0,
+            selectedCryptoIndex: 0,
+          ),
         );
   Future<void> onStart() async {
     emit(
@@ -30,7 +31,8 @@ class AppCubit extends Cubit<AppState> {
   Future<void> onCryptoItemClicked(
       int index,
       AnimationController slideDownCartListController,
-      AnimationController slideDownCryptoDetailController) async {
+      AnimationController slideDownCryptoDetailController,
+      BuildContext buildContext) async {
     emit(
       state.copyWith(selectedCryptoIndex: index),
     );
@@ -43,11 +45,30 @@ class AppCubit extends Cubit<AppState> {
     slideDownCartListController.forward();
 
     await Future.delayed(
-      const Duration(seconds: 1),
+      const Duration(milliseconds: 1800),
     );
-    emit(
-      state.copyWith(showCryptoDetailPage: true),
-    );
-    slideDownCryptoDetailController.forward();
+
+    buildContext.go('/cryptoDetail', extra: state.selectedCryptoIndex);
+  }
+
+  bool isFirstTry = false;
+
+  Future<void> startCryptoPage(
+      AnimationController cryptoTransactionsListController,
+      AnimationController cryptoImageAnimation,
+      AnimationController sendAndBuyController,
+      AnimationController dollorValueController,
+      AnimationController cryptoValueController) async {
+    cryptoTransactionsListController.forward();
+    await Future.delayed(const Duration(milliseconds: 500));
+    sendAndBuyController.forward();
+    await Future.delayed(const Duration(milliseconds: 200));
+    cryptoValueController.forward();
+    await Future.delayed(const Duration(milliseconds: 0));
+    cryptoImageAnimation.forward();
+    await Future.delayed(const Duration(milliseconds: 300));
+    dollorValueController.forward();
+
+    isFirstTry = true;
   }
 }

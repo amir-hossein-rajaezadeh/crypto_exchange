@@ -6,7 +6,6 @@ import 'package:crypto_exchange/utlis/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../data/crypto.dart';
 import '../data/crypto_list.dart';
 import '../utlis/colors.dart';
 import '../cubit/app_cubit.dart';
@@ -80,80 +79,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ],
               ),
               if (state.topContainerHeight == 310) bottomBarWidget(width),
-              if (state.showCryptoDetailPage)
-                SlideTransition(
-                  position: slideDownCryptoDetailAnimation,
-                  child: cryptoTransactions(state),
-                ),
             ],
           ),
         );
       },
-    );
-  }
-
-  Container bottomBarWidget(double width) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8, left: 8, bottom: 15),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22), color: darkGrey),
-      height: 60,
-      width: width,
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 8),
-            width: 90,
-            height: 42,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18), color: darkPurple),
-            child: Container(
-              margin: const EdgeInsets.only(right: 4, left: 8),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.wallet,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(
-                    width: 6,
-                  ),
-                  Text(
-                    Strings.assets,
-                    style: AppTheme.getTextTheme(null)
-                        .bodyMedium!
-                        .copyWith(color: Colors.white, fontSize: 12),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 50),
-            child: const Icon(
-              CupertinoIcons.search,
-              color: grey,
-              size: 24,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 65),
-            child: const Icon(
-              Icons.settings,
-              size: 23,
-              color: grey,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 65),
-            child: const Icon(
-              Icons.person_outline_sharp,
-              size: 25,
-              color: grey,
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -187,7 +116,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   context.read<AppCubit>().onCryptoItemClicked(
                       index,
                       slideDownCartListController,
-                      slideDownCryptoDetailController);
+                      slideDownCryptoDetailController,
+                      context);
                   selectedCryptoController.forward();
                 },
                 onPointerUp: (event) {
@@ -296,7 +226,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return AnimatedContainer(
       width: width,
       height: double.parse('${state.topContainerHeight}'),
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1000),
       decoration: BoxDecoration(
         color: pink,
         borderRadius: BorderRadius.only(
@@ -488,199 +418,64 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget sendAndBuy() {
+  Container bottomBarWidget(double width) {
     return Container(
-      margin: const EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 50,
-            width: 190,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15), color: darkPink),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    const Icon(CupertinoIcons.arrow_up_right),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      Strings.send,
-                      style: AppTheme.getTextTheme(null).bodyMedium,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Container(
-            height: 50,
-            width: 190,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15), color: darkPink),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    const Icon(CupertinoIcons.creditcard),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      Strings.buy,
-                      style: AppTheme.getTextTheme(null).bodyMedium,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget cryptoTransactions(AppState state) {
-    final crypto = addCryptoToList()[state.selectedCryptoIndex];
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (state.showCryptoDetailPage)
-          SlideTransition(
-            position: slideDownCryptoDetailAnimation,
-            child: sendAndBuy(),
-          ),
-        SizedBox(
-            height: 500,
-            child: ListView.builder(
-              itemCount: crypto.cryptoTransactions.length,
-              padding: const EdgeInsets.all(0),
-              shrinkWrap: true,
-              itemBuilder: (context, wholeItemIndex) {
-                final cryptoTransactions =
-                    crypto.cryptoTransactions[wholeItemIndex];
-                return FadeInDown(
-                  delay: Duration(milliseconds: (wholeItemIndex * 150) + 200),
-                  child: SizedBox(
-                    child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(0),
-                      shrinkWrap: true,
-                      itemCount: cryptoTransactions.cryptoLogs.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            cryptoTransactions.cryptoLogs[index] ==
-                                    cryptoTransactions.cryptoLogs[0]
-                                ? Container(
-                                    margin: const EdgeInsets.only(left: 20),
-                                    child: Text(
-                                      cryptoTransactions.logDate,
-                                      style: AppTheme.getTextTheme(null)
-                                          .bodyMedium!
-                                          .copyWith(
-                                              color: grey,
-                                              fontWeight: FontWeight.w400),
-                                    ),
-                                  )
-                                : Container(),
-                            transactionItemWidget(
-                                crypto, context, wholeItemIndex, index)
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
-            )),
-      ],
-    );
-  }
-
-  Container transactionItemWidget(
-      Crypto crypto, BuildContext context, int wholeItemIndex, int index) {
-    final cryptoTransactions = crypto.cryptoTransactions[wholeItemIndex];
-    return Container(
-      margin: const EdgeInsets.only(top: 5, right: 15, left: 15),
+      margin: const EdgeInsets.only(right: 8, left: 8, bottom: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: Colors.white,
-      ),
+          borderRadius: BorderRadius.circular(22), color: darkGrey),
       height: 60,
-      width: MediaQuery.of(context).size.width,
+      width: width,
       child: Row(
         children: [
           Container(
-            margin: const EdgeInsets.only(left: 9),
-            width: 44,
-            height: 44,
+            margin: const EdgeInsets.only(left: 8),
+            width: 90,
+            height: 42,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: lightGrey),
-            child: Icon(
-              cryptoTransactions.cryptoLogs[index].isIncrease
-                  ? CupertinoIcons.arrow_down_left
-                  : CupertinoIcons.arrow_up_right,
-              size: 30,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(
-              left: 8,
-              top: 8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cryptoTransactions.cryptoLogs[index].isIncrease
-                      ? Strings.received
-                      : Strings.sent,
-                  style: AppTheme.getTextTheme(null).bodyMedium,
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Text(
-                  cryptoTransactions.cryptoLogs[index].logSource,
-                  style: AppTheme.getTextTheme(null).bodySmall,
-                )
-              ],
-            ),
-          ),
-          Expanded(
+                borderRadius: BorderRadius.circular(18), color: darkPurple),
             child: Container(
-              margin: const EdgeInsets.only(right: 15, top: 9),
-              alignment: Alignment.topRight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              margin: const EdgeInsets.only(right: 4, left: 8),
+              child: Row(
                 children: [
-                  Text(
-                    '${cryptoTransactions.cryptoLogs[index].isIncrease ? '+' : '-'}${cryptoTransactions.cryptoLogs[index].logPrice} USDT',
-                    style: AppTheme.getTextTheme(null).bodyMedium!.copyWith(
-                        fontSize: 15,
-                        color: cryptoTransactions.cryptoLogs[index].isIncrease
-                            ? Colors.green
-                            : Colors.red),
+                  const Icon(
+                    Icons.wallet,
+                    color: Colors.white,
                   ),
                   const SizedBox(
-                    height: 4,
+                    width: 6,
                   ),
                   Text(
-                      '\$${cryptoTransactions.cryptoLogs[index].logPriceInDollar}',
-                      style: AppTheme.getTextTheme(null).bodySmall!)
+                    Strings.assets,
+                    style: AppTheme.getTextTheme(null)
+                        .bodyMedium!
+                        .copyWith(color: Colors.white, fontSize: 12),
+                  )
                 ],
               ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 50),
+            child: const Icon(
+              CupertinoIcons.search,
+              color: grey,
+              size: 24,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 65),
+            child: const Icon(
+              Icons.settings,
+              size: 23,
+              color: grey,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 65),
+            child: const Icon(
+              Icons.person_outline_sharp,
+              size: 25,
+              color: grey,
             ),
           )
         ],
