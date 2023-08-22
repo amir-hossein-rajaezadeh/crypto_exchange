@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:crypto_exchange/cubit/app_cubit.dart';
 import 'package:crypto_exchange/cubit/app_state.dart';
 import 'package:crypto_exchange/data/crypto.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animated_digit/animated_digit.dart';
+import 'package:flutter/services.dart';
 
 class CryptoDetailPage extends StatefulWidget {
   const CryptoDetailPage({super.key, required this.cryptoIndex});
@@ -34,6 +34,12 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    //Cahnge  status  bar color to pink
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: pink,
+    ));
+
     sendAndBuyController = AnimationController(
       duration: const Duration(milliseconds: 900),
       vsync: this,
@@ -101,203 +107,236 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
             backgroundColor: pink,
             body: BlocBuilder<AppCubit, AppState>(
               builder: (context, state) {
-                return Column(
+                return Stack(
+                  alignment: Alignment.bottomCenter,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 12, top: 10),
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: grey),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.only(left: 12, top: 10),
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: grey),
+                                ),
+                                child: const Center(
+                                    child: Icon(Icons.arrow_back_ios_new)),
+                              ),
                             ),
-                            child: const Center(
-                                child: Icon(Icons.arrow_back_ios_new)),
+                            Expanded(
+                              child: Container(
+                                width: 50,
+                                margin:
+                                    const EdgeInsets.only(right: 50, top: 0),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  crypto.cryptoName,
+                                  style: AppTheme.getTextTheme(null)
+                                      .bodyMedium!
+                                      .copyWith(
+                                          color: Colors.white, fontSize: 18),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SlideTransition(
+                          position: cryptoImageAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 40),
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white),
+                            child: Container(
+                              margin: const EdgeInsets.all(10),
+                              child: Image.asset(
+                                crypto.cryptoImage,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SlideTransition(
+                          position: dollorValueAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: AnimatedDigitWidget(
+                              value: 5.49,
+                              fractionDigits: 2,
+                              curve: Curves.linear,
+                              duration: const Duration(milliseconds: 2000),
+                              enableSeparator: true,
+                              prefix: "\$",
+                              textStyle: AppTheme.getTextTheme(null)
+                                  .titleLarge!
+                                  .copyWith(fontSize: 40),
+                            ),
+                          ),
+                        ),
+                        SlideTransition(
+                          position: cryptoValueAnimation,
+                          child: AnimatedDigitWidget(
+                            curve: Curves.bounceOut,
+                            value: 0.19,
+                            suffix: 'USDT',
+                            textStyle: AppTheme.getTextTheme(null).bodySmall,
+                          ),
+                        ),
+                        SlideTransition(
+                          position: sendAndBuyAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    context
+                                        .read<AppCubit>()
+                                        .onSendButtonPressed();
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    width: 190,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: darkPink),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          color: Colors.transparent,
+                                          child: Row(
+                                            children: [
+                                              const Icon(CupertinoIcons
+                                                  .arrow_up_right),
+                                              const SizedBox(
+                                                width: 4,
+                                              ),
+                                              Text(
+                                                Strings.send,
+                                                style:
+                                                    AppTheme.getTextTheme(null)
+                                                        .bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  height: 50,
+                                  width: 190,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: darkPink),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(CupertinoIcons.creditcard),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                            Strings.buy,
+                                            style: AppTheme.getTextTheme(null)
+                                                .bodyMedium,
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                         Expanded(
-                          child: Container(
-                            width: 50,
-                            margin: const EdgeInsets.only(right: 50, top: 0),
-                            alignment: Alignment.center,
-                            child: Text(
-                              crypto.cryptoName,
-                              style: AppTheme.getTextTheme(null)
-                                  .bodyMedium!
-                                  .copyWith(color: Colors.white, fontSize: 18),
+                          child: SlideTransition(
+                            position: cryptoTransactionsListAnimation,
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              child: ListView.builder(
+                                itemCount: crypto.cryptoTransactions.length,
+                                padding: const EdgeInsets.all(0),
+                                shrinkWrap: true,
+                                itemBuilder: (context, wholeItemIndex) {
+                                  final cryptoTransactions =
+                                      crypto.cryptoTransactions[wholeItemIndex];
+                                  return SizedBox(
+                                    child: ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.all(0),
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          cryptoTransactions.cryptoLogs.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            cryptoTransactions
+                                                        .cryptoLogs[index] ==
+                                                    cryptoTransactions
+                                                        .cryptoLogs[0]
+                                                ? Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 20),
+                                                    child: Text(
+                                                      cryptoTransactions
+                                                          .logDate,
+                                                      style: AppTheme
+                                                              .getTextTheme(
+                                                                  null)
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                              color: grey,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            transactionItemWidget(
+                                                crypto,
+                                                context,
+                                                wholeItemIndex,
+                                                index,
+                                                width)
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         )
                       ],
                     ),
-                    SlideTransition(
-                      position: cryptoImageAnimation,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 40),
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white),
-                        child: Container(
-                          margin: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            crypto.cryptoImage,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SlideTransition(
-                      position: dollorValueAnimation,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: AnimatedDigitWidget(
-                          value: 5.49,
-                          fractionDigits: 2,
-                          curve: Curves.linear,
-                          duration: const Duration(milliseconds: 2000),
-                          enableSeparator: true,
-                          prefix: "\$",
-                          textStyle: AppTheme.getTextTheme(null)
-                              .titleLarge!
-                              .copyWith(fontSize: 40),
-                        ),
-                      ),
-                    ),
-                    SlideTransition(
-                      position: cryptoValueAnimation,
-                      child: AnimatedDigitWidget(
-                        curve: Curves.bounceOut,
-                        value: 0.19,
-                        suffix: 'USDT',
-                        textStyle: AppTheme.getTextTheme(null).bodySmall,
-                      ),
-                    ),
-                    SlideTransition(
-                      position: sendAndBuyAnimation,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 50,
-                              width: 190,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: darkPink),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(CupertinoIcons.arrow_up_right),
-                                      const SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        Strings.send,
-                                        style: AppTheme.getTextTheme(null)
-                                            .bodyMedium,
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              height: 50,
-                              width: 190,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: darkPink),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(CupertinoIcons.creditcard),
-                                      const SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        Strings.buy,
-                                        style: AppTheme.getTextTheme(null)
-                                            .bodyMedium,
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SlideTransition(
-                        position: cryptoTransactionsListAnimation,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 15),
-                          child: ListView.builder(
-                            itemCount: crypto.cryptoTransactions.length,
-                            padding: const EdgeInsets.all(0),
-                            shrinkWrap: true,
-                            itemBuilder: (context, wholeItemIndex) {
-                              final cryptoTransactions =
-                                  crypto.cryptoTransactions[wholeItemIndex];
-                              return SizedBox(
-                                child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(0),
-                                  shrinkWrap: true,
-                                  itemCount:
-                                      cryptoTransactions.cryptoLogs.length,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        cryptoTransactions.cryptoLogs[index] ==
-                                                cryptoTransactions.cryptoLogs[0]
-                                            ? Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 20),
-                                                child: Text(
-                                                  cryptoTransactions.logDate,
-                                                  style: AppTheme.getTextTheme(
-                                                          null)
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          color: grey,
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                ),
-                                              )
-                                            : Container(),
-                                        transactionItemWidget(crypto, context,
-                                            wholeItemIndex, index)
-                                      ],
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    )
+                    cryptoCalculatorWidget(state, width)
                   ],
                 );
               },
@@ -308,11 +347,194 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
     );
   }
 
-  Widget transactionItemWidget(
-      Crypto crypto, BuildContext context, int wholeItemIndex, int index) {
+  AnimatedContainer cryptoCalculatorWidget(AppState state, double width) {
+    final cryptoItem = cryptoList[state.selectedCryptoIndex];
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 1500),
+      height: state.showCryptoCalculator ? 800 : 0,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+      ),
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 22, left: 18),
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child:
+                        const Icon(Icons.arrow_back_ios_new_outlined, size: 20),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 60, top: 15),
+                        child: Text(
+                          cryptoItem.cryptoName,
+                          style: AppTheme.getTextTheme(null)
+                              .bodyLarge!
+                              .copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              width: width,
+              margin: const EdgeInsets.only(right: 15, left: 15, top: 20),
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: purple,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 15, left: 25),
+                    child: Text(
+                      Strings.reception,
+                      style: AppTheme.getTextTheme(null).bodyMedium!.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, left: 25),
+                    child: Text(
+                      Strings.interpriseSystem,
+                      style: AppTheme.getTextTheme(null).titleLarge!.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.w400),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              width: width,
+              margin: const EdgeInsets.only(right: 15, left: 15, top: 15),
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: verylightGrey,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 0, left: 20),
+                        child: Text(
+                          Strings.amount,
+                          style: AppTheme.getTextTheme(null)
+                              .titleLarge!
+                              .copyWith(
+                                  fontSize: 18, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(left: 20),
+                        child: AnimatedDigitWidget(
+                          value: 0,
+                          prefix: '\$',
+                          fractionDigits: 2,
+                          enableSeparator: true,
+                        ),
+                      )
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 15),
+                    child: Text(
+                      '=0.17' 'USDT',
+                      style: AppTheme.getTextTheme(null).titleLarge!.copyWith(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400,
+                          color: mediumGrey),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20, left: 20),
+              height: 340,
+              child: GridView.count(
+                childAspectRatio: 3.2 / 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 3,
+                children: List.generate(
+                  12,
+                  (index) {
+                    return index == 11
+                        ? const Icon(Icons.backspace_outlined)
+                        : index == 9
+                            ? Container()
+                            : GestureDetector(
+                              onTap: () {
+                                context.read<AppCubit>().startCryptoPage(cryptoTransactionsListController, cryptoImageAnimation, sendAndBuyController, dollorValueController, cryptoValueController)
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: lightGrey),
+                                  child: Center(
+                                    child: Text(
+                                      index == 10 ? '0' : '${index + 1}',
+                                      style: const TextStyle(fontSize: 30),
+                                    ),
+                                  ),
+                                ),
+                            );
+                  },
+                ),
+              ),
+            ),
+            Container(
+              width: width,
+              margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100), color: lightBlack),
+              height: 50,
+              child: Center(
+                child: Text(
+                  Strings.send,
+                  style: AppTheme.getTextTheme(null)
+                      .bodyMedium!
+                      .copyWith(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget transactionItemWidget(Crypto crypto, BuildContext context,
+      int wholeItemIndex, int index, double width) {
     final cryptoTransactions = crypto.cryptoTransactions[wholeItemIndex];
-    return FadeInDown(
-      delay: Duration(milliseconds: (wholeItemIndex * 50) + 100),
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 350 * index + 350),
+      opacity: 1,
       child: Container(
         margin: const EdgeInsets.only(top: 5, right: 15, left: 15),
         decoration: BoxDecoration(
@@ -320,7 +542,7 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
           color: Colors.white,
         ),
         height: 60,
-        width: MediaQuery.of(context).size.width,
+        width: width,
         child: Row(
           children: [
             Container(

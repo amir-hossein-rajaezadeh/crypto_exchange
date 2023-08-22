@@ -11,6 +11,7 @@ class AppCubit extends Cubit<AppState> {
             isFirstTry: true,
             topContainerHeight: 0,
             selectedCryptoIndex: 0,
+            showCryptoCalculator: false,
           ),
         );
   Future<void> onStart() async {
@@ -67,7 +68,17 @@ class AppCubit extends Cubit<AppState> {
     cryptoImageAnimation.forward();
     await Future.delayed(const Duration(milliseconds: 300));
     dollorValueController.forward();
-
     isFirstTry = true;
+  }
+
+  Future<void> onSendButtonPressed() async {
+    const Duration(milliseconds: 400);
+    emit(
+      state.copyWith(showCryptoCalculator: true),
+    );
+  }
+
+  void doCalculation(int clickedNumber) {
+    
   }
 }

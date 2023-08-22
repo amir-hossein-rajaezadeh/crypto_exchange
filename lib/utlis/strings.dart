@@ -7,4 +7,7 @@ class Strings {
   static String buy = 'Buy';
   static String received = 'Received';
   static String sent = 'Sent';
+  static String reception = 'Reception';
+  static String interpriseSystem = 'Interprise System';
+  static String amount = 'Amount';
 }
