@@ -64,7 +64,6 @@ class AppCubit extends Cubit<AppState> {
     sendAndBuyController.forward();
     await Future.delayed(const Duration(milliseconds: 200));
     cryptoValueController.forward();
-    await Future.delayed(const Duration(milliseconds: 0));
     cryptoImageAnimation.forward();
     await Future.delayed(const Duration(milliseconds: 300));
     dollorValueController.forward();

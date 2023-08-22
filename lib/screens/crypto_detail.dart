@@ -43,11 +43,11 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
       vsync: this,
     );
     dollorValueController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     cryptoImageController = AnimationController(
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 1700),
       vsync: this,
     );
     cryptoTransactionsListController = AnimationController(
@@ -55,7 +55,7 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
       vsync: this,
     );
     dollorValueAnimation = Tween<Offset>(
-      begin: const Offset(0, -7),
+      begin: const Offset(0, -5),
       end: const Offset(0, 0),
     ).animate(
       dollorValueController,
@@ -69,13 +69,13 @@ class _CryptoDetailPageState extends State<CryptoDetailPage>
     );
 
     cryptoImageAnimation = Tween<Offset>(
-      begin: const Offset(0, -12),
+      begin: const Offset(0, -6),
       end: const Offset(0, 0),
     ).animate(
       cryptoImageController,
     );
     sendAndBuyAnimation = Tween<Offset>(
-      begin: const Offset(0, -5.5),
+      begin: const Offset(0, -8),
       end: const Offset(0, 0),
     ).animate(
       sendAndBuyController,
