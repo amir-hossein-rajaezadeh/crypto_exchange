@@ -47,15 +47,23 @@ final cryptoList = [
   Crypto(
     'USDT',
     'assets/images/usdt.png',
-    700,
+    5.49,
     5465.49,
     3.12,
     true,
     [
       CryptoTransactions(
-        'logDate',
+        'Monday',
         [
           CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
+        ],
+      ),
+      CryptoTransactions(
+        'Friday',
+        [
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 80, 0.32),
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 20, 0.12),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 60, 0.85),
         ],
       )
     ],
@@ -63,15 +71,15 @@ final cryptoList = [
   Crypto(
     'ETH',
     'assets/images/ethereum.png',
-    2.45845,
-    560.49,
+    2.45,
+    540.49,
     5.70,
     true,
     [
       CryptoTransactions(
-        'logDate',
+        'Tuesday',
         [
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 120, 1.5),
         ],
       )
     ],
@@ -79,15 +87,36 @@ final cryptoList = [
   Crypto(
     'SAND',
     'assets/images/sand.png',
-    1.5626,
+    1.56,
     34.09,
     2.30,
     true,
     [
       CryptoTransactions(
-        'logDate',
+        'Saterday',
         [
           CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
+        ],
+      ),
+      CryptoTransactions(
+        'Sunday',
+        [
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 20, 0.80),
+        ],
+      ),
+      CryptoTransactions(
+        'Monday',
+        [
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 80, 0.45),
+        ],
+      ),
+      CryptoTransactions(
+        'Tuesday',
+        [
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 20, 0.12),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 70, 0.60),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 40, 0.15),
         ],
       )
     ],
@@ -95,31 +124,30 @@ final cryptoList = [
   Crypto(
     'USDC',
     'assets/images/usdc.png',
-    1.2737,
+    1.27,
     2587.13,
     3.60,
     false,
-    [
-      CryptoTransactions(
-        'logDate',
-        [
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
-        ],
-      )
-    ],
+    [],
   ),
   Crypto(
-    'Bit',
+    'Bitcoin',
     'assets/images/bitcoin.png',
-    1.2737,
-    9952.67,
+    1.27,
+    26033.28,
     2.34,
     false,
     [
       CryptoTransactions(
-        'logDate',
+        'Tuesday',
         [
-          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 50, 0.24),
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 51, 8),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 12, 0.5),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 87, 0.72),
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 69, 0.6),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 81, 0.8),
+          CryptoLog(false, 'Tgdjdjosmctksaqmefn.lui2', 35, 0.2),
+          CryptoLog(true, 'Tgdjdjosmctksaqmefn.lui2', 46, 0.4),
         ],
       )
     ],

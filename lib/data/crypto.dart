@@ -6,7 +6,7 @@ class Crypto {
   final double cryptoChangedPercentage;
   final double cryptoChangedPrice;
   final double cryptoPrice;
-  final bool isIncrease;
+   final bool isIncrease;
   final List<CryptoTransactions> cryptoTransactions;
   Crypto(
     this.cryptoName,

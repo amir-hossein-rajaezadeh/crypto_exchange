@@ -3,6 +3,7 @@ import 'package:animated_digit/animated_digit.dart';
 import 'package:crypto_exchange/cubit/app_state.dart';
 import 'package:crypto_exchange/utlis/app_theme.dart';
 import 'package:crypto_exchange/utlis/strings.dart';
+import 'package:crypto_exchange/utlis/three_digit_formater.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,10 +22,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<double> selectedCryptoScaleAnimation;
   late Animation<double> selectedCryptoDefualtAnimation;
   late AnimationController selectedCryptoController;
-
   late Animation<Offset> slideDownCartListAnimation;
   late AnimationController slideDownCartListController;
-
   late Animation<Offset> slideDownCryptoDetailAnimation;
   late AnimationController slideDownCryptoDetailController;
 
@@ -33,15 +32,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     slideDownCryptoDetailController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1100),
       vsync: this,
     );
     slideDownCartListController = AnimationController(
-      duration: const Duration(milliseconds: 1900),
+      duration: const Duration(milliseconds: 1800),
       vsync: this,
     );
     selectedCryptoController = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 10),
       vsync: this,
     );
     selectedCryptoScaleAnimation =
@@ -78,7 +77,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   cryptoListViewWidget(this, state),
                 ],
               ),
-              if (state.topContainerHeight == 310) bottomBarWidget(width),
+              if (state.showBottomBar) bottomBarWidget(width),
             ],
           ),
         );
@@ -175,7 +174,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '\$${crypto.cryptoChangedPrice}',
+                              '\$${threeDigitFormatter(crypto.cryptoChangedPrice)}',
                               style: AppTheme.getTextTheme(null)
                                   .bodyMedium!
                                   .copyWith(

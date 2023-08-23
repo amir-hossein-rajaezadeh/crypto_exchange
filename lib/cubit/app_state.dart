@@ -5,23 +5,31 @@ class AppState extends Equatable {
   final bool isFirstTry;
   final int selectedCryptoIndex;
   final bool showCryptoCalculator;
-  const AppState({
-    required this.selectedCryptoIndex,
-    required this.topContainerHeight,
-    required this.isFirstTry,
-    required  this.showCryptoCalculator
-  });
+  final int selectedNumber;
+  final bool showBottomBar;
+  const AppState(
+      {required this.selectedCryptoIndex,
+      required this.topContainerHeight,
+      required this.isFirstTry,
+      required this.showCryptoCalculator,
+      required this.selectedNumber,
+      required this.showBottomBar});
 
   AppState copyWith({
     int? topContainerHeight,
     bool? isFirstTry,
     int? selectedCryptoIndex,
     bool? showCryptoCalculator,
+    int? selectedNumber,
+    bool? showBottomBar,
   }) {
     return AppState(
       topContainerHeight: topContainerHeight ?? this.topContainerHeight,
       isFirstTry: isFirstTry ?? this.isFirstTry,
-      selectedCryptoIndex: selectedCryptoIndex ?? this.selectedCryptoIndex, showCryptoCalculator: showCryptoCalculator??this.showCryptoCalculator,
+      selectedCryptoIndex: selectedCryptoIndex ?? this.selectedCryptoIndex,
+      showCryptoCalculator: showCryptoCalculator ?? this.showCryptoCalculator,
+      selectedNumber: selectedNumber ?? this.selectedNumber,
+      showBottomBar: showBottomBar ?? this.showBottomBar,
     );
   }
 
@@ -30,6 +38,7 @@ class AppState extends Equatable {
         topContainerHeight,
         isFirstTry,
         selectedCryptoIndex,
-        showCryptoCalculator
+        showCryptoCalculator,
+        selectedNumber,showBottomBar
       ];
 }
